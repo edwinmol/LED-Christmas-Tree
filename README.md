@@ -1,7 +1,7 @@
 # LED-Christmas-Tree
 A raspberry Pi Xmas project
 
-##Planning
+## Planning
 - draft BOM and order components (budget=100€) - done
 - design case + LED tree - done
 - design schematic of controller - done

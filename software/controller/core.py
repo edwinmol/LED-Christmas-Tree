@@ -14,12 +14,12 @@ GPIO.setmode(GPIO.BOARD)
 
 #setup GPIO outputs
 pins = [
-    # layers
-    11, #pin 17, transistor 1 multiplexer
-    13, #pin 27, transistor 2 multiplexer
-    15, #pin 22, transistor 3 multiplexer
+    # layers (works with multiplexer on controller)
+    11, #pin 17, transistor 1 multiplexer (first bit)
+    13, #pin 27, transistor 2 multiplexer (second bit)
+    15, #pin 22, transistor 3 multiplexer (third bit)
 
-    # columns
+    # columns (uses SPI)
     23, #pin 11, shift register SPI CLOCK
     24, #pin 8, shift register SPI LATCH
     19, #pin 10, shift register SPI SERIAL DATA
@@ -31,14 +31,14 @@ for pin in pins:
     GPIO.setup(pin, GPIO.OUT)
 
 #three-dimensional list containing LED point values
-points = [[[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]],
-          [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]]
+points = [[[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]]]
 
 """-------------CLASS DEFINITIONS----------------"""
 #this class handles interactions between the code and the physical shift registers
@@ -70,42 +70,6 @@ class ShiftRegister():
             self.clock(0)
         self.latch()
 
-#sequence class, used to run through patterns defined in LEDcube.py
-class Sequence():
-    
-    #inputs a list of sublists, where each sublist contains three pattern
-    #   elements: the functions, its name parameter, and the number of repetitions
-    def __init__(self, patterns):
-        self.patterns = []
-        
-        for p in range(len(patterns)):
-            self.patterns.append(patterns[p])
-
-    #adds a single pattern sublist
-    def add(self, pattern):
-        self.patterns.append(pattern)
-
-    #run the sequence for times iterations
-    def run(self, times, speed):
-        t = times
-        while t > 0:
-
-            #for every sublist
-            for p in range(len(self.patterns)):
-                #if the sublist contains real parameters, apply them
-                if not self.patterns[p][1] == "N":
-                    self.patterns[p][0](self.patterns[p][1],
-                                        self.patterns[p][2],
-                                        speed)
-
-                #otherwise run without a parameter
-                else:
-                    self.patterns[p][0](self.patterns[p][2], speed)
-
-            #if t > 9999 then run the sequence forever
-            if not t > 9999:
-                t -= 1
-
 #this class runs in a separate thread, continuously reading the 'points' list
 #   and writing its values to the LED cube
 class Multiplexer():
@@ -115,21 +79,24 @@ class Multiplexer():
 
     #the second parameter has to exist for the thread to run, but does nothing
     def multiplex(self, p):
+        layer = 0x0
         while self.running:
-
-            for layer in range(len(points)):
-                #turn previous layer off before updating LEDs
-                GPIO.output(transistors[y-1], 0)
-                #pick which register to write to - each controls half
-                #   of the cube
-                if x < 2:
+            for bam_cycle in range(16):
+                for led in range(len(points)):
+                    self.update_layer(layer)
+                    #turn previous layer off before updating LEDs
+                    GPIO.output(transistors[y-1], 0)
+                    #pick which register to write to - each controls half
+                    #   of the cube
                     self.register2.clock(points[y][x][z])
-                else:
-                    self.register1.clock(points[y][x][z])
+                    #write register values to cube and enable layer
+                    self.register1.latch()
+                    layer += 1
+                    sleep(0.001)
+                layer = 0x0
 
-                #write register values to cube and enable layer
-                self.register1.latch()
-                self.register2.latch()
-                GPIO.output(transistors[y], 1)
-                
-                sleep(0.001)
+    def update_layer(self, layer):
+        for transistor_index in range(len(transistors)):
+            mask = 1 << transistor_index
+            transistor_bit = (layer & mask) >> transistor_index
+            GPIO.output(transistors[transistor_index], transistor_bit)

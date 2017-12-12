@@ -1,8 +1,11 @@
 """--------IMPORT MODULES AND PATTERNS--------"""
 import threading
 import traceback
+import RPi.GPIO as GPIO
 
 from __builtin__ import raw_input
+
+from core import Multiplexer
 from patterns.plot import *
 from patterns.geometric import *
 from patterns.plane import *
@@ -14,9 +17,7 @@ from patterns.transitions import *
 from math import sin, sqrt
 from time import sleep
 
-from controller.core import Multiplexer
-from controller.patterns.plane import bounce
-from controller.sequence import Sequence
+from sequence import Sequence
 
 """-----------------SEQUENCES----------------"""
 #run a series of patterns a specified number of times

@@ -5,8 +5,8 @@ A raspberry Pi Xmas project
 * draft BOM and order components (budget=100€) : done
 * design case + LED tree : done
 * design schematic of controller : done
-* construct LED tree : busy
-* construct case : busy
+* construct LED tree : done
+* construct case : done
 * programming raspberry PI
   * Select programming language (Python, C/C++, Java, other..) : done
   * API definition

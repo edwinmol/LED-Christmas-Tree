@@ -89,17 +89,15 @@ class Multiplexer:
     #the second parameter has to exist for the thread to run, but does nothing
     def multiplex(self):
         layer = 0x0
-        # while self.running:
-        self.bam_filler.fill()
-        starttime = datetime.now()
-        for bam_cycle in range(1):
-            for element in range(elements):
-                if element % elements_per_layer == 0:
-                    self.update_layer(layer)
-                self.register.send(bam[(element * 15) + bam_cycle])
-            layer += 1
-        layer = 0x0
-        print("Timedelta: " + str(datetime.now().microsecond - starttime.microsecond))
+        while self.running:
+            self.bam_filler.fill()
+            for bam_cycle in range(1):
+                for element in range(elements):
+                    if element % elements_per_layer == 0:
+                        self.update_layer(layer)
+                    self.register.send(bam[(element * 15) + bam_cycle])
+                layer += 1
+            layer = 0x0
 
     def update_layer(self, layer):
         for transistor_index in range(len(transistors)):

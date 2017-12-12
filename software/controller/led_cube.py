@@ -76,8 +76,9 @@ from sequence import Sequence
 #                       [bounce,      "x",                5],
 #                       [transition,  "xbounce-end",      1]])
 
-sequence = Sequence([[bounce,       "x",                 2],
-                     [bounce,       "y",                 2]])
+sequence = Sequence([[bounce,      "x",                2],
+                     [bounce,      "y",                2],
+                     [spiral,      "N",                6]])
 
 """---------------MAIN FUNCTION----------------"""
 try:

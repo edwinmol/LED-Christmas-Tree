@@ -88,9 +88,9 @@ class Multiplexer():
                     GPIO.output(transistors[y-1], 0)
                     #pick which register to write to - each controls half
                     #   of the cube
-                    self.register2.clock(points[y][x][z])
+                    self.register.clock(points[y][x][z])
                     #write register values to cube and enable layer
-                    self.register1.latch()
+                    self.register.latch()
                     layer += 1
                     sleep(0.001)
                 layer = 0x0

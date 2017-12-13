@@ -27,7 +27,8 @@ try:
     multiplexerThread.start()
 
     #run sequence
-    sequence.run(1, 0.075)
+    while True:
+        sequence.run(1, 0.075)
 
     GPIO.cleanup()
 

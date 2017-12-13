@@ -7,11 +7,11 @@ A raspberry Pi Xmas project
 * design schematic of controller : done
 * construct LED tree : done
 * construct case : done
+* prototyping (proof of concept): done
+* create controller PCB according to schematic: done
+* assembly of the final tree + casing: done
 * programming raspberry PI
   * Select programming language (Python, C/C++, Java, other..) : done
   * API definition
   * Animations
   * Musicfragments or voice messages
-* prototyping (proof of concept)
-* create controller PCB according to schematic
-* assembly of the final Tree + casing

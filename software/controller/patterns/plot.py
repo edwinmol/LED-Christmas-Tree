@@ -3,6 +3,10 @@
 
 #import points list
 from core import points
+from core import Bam_filler
+
+
+bam = Bam_filler
 
 #sets a specific LED high or low
 # def plot(x, y, z, n=1):
@@ -10,6 +14,7 @@ def led(x, y, r, g, b):
     points[y][x][0] = r
     points[y][x][1] = g
     points[y][x][2] = b
+    bam.fill()
 
 #fills from (x1,y1,z1) to (x2,y2,z2) with n
 # def plotFill(x1, y1, z1, x2, y2, z2, n=1):

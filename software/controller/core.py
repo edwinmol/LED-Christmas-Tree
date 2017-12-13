@@ -1,7 +1,6 @@
 """--------------IMPORT MODULES--------------"""
 import RPi.GPIO as GPIO
-import datetime
-import array
+import spidev
 
 #code designed for a 7 * 8 christmas tree
 
@@ -39,24 +38,48 @@ points = [[[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [
           [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
           [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
           [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]],
-          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x5]]]
+          [[0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0], [0x0, 0x0, 0x0]]]
 
 bam = []
 elements = 168
 elements_per_layer = 8
 
+
+
 """-------------CLASS DEFINITIONS----------------"""
 #this class handles interactions between the code and the physical shift registers
 class ShiftRegister():
     def __init__(self, datapin, clockpin, latchpin, output_enablepin):
-        self.datapin = datapin
-        self.clockpin = clockpin
-        self.latchpin = latchpin
+        # self.datapin = datapin
+        # self.clockpin = clockpin
+        # self.latchpin = latchpin
         self.output_enablepin = output_enablepin
+        self.bitbuffer = ""
+
+        self.spi = spidev.SpiDev()
+        self.spi.lsbfirst = False
+        self.spi.max_speed_hz = 16000000
+        self.spi.mode = 0b00
+        self.spi.open(0, 1)
+
+
+    def chunks(l, chunck_length):
+        """Yield successive n-sized chunks from l."""
+        for i in range(0, len(l), chunck_length):
+            yield l[i:i + chunck_length]
 
     def send(self, bit):
-        print(bit, end="")
-        # TODO SPI interface
+        self.bitbuffer.append(bit)
+        try:
+            if len(self.bitbuffer) % 21 == 0:
+                self.bitbuffer.extend(("0", "0", "0"))
+                bytelist = [hex(int(''.join(chunck), 2)) for chunck in self.chunks(list(reversed(self.bitbuffer)), 8)]
+                self.spi.xfer2([bytelist])
+                self.bitbuffer = []
+
+        except KeyboardInterrupt:
+            self.spi.close()
+
 
 class Bam_filler:
     def __init__(self):
@@ -71,7 +94,7 @@ class Bam_filler:
                         mask = 1 << byte_index
                         rgb_bit = (points[layer_index][led_index][rgb_index] & mask) >> byte_index
                         for count in range(2**byte_index):
-                            self.layers_bam.append(rgb_bit)
+                            self.layers_bam.append(str(rgb_bit))
         global bam
         bam = self.layers_bam
 
@@ -90,7 +113,6 @@ class Multiplexer:
     def multiplex(self):
         layer = 0x0
         while self.running:
-            self.bam_filler.fill()
             for bam_cycle in range(1):
                 for element in range(elements):
                     if element % elements_per_layer == 0:

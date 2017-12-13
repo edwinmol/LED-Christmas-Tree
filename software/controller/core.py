@@ -90,7 +90,6 @@ class Multiplexer:
     def multiplex(self):
         layer = 0x0
         while self.running:
-            self.bam_filler.fill()
             for bam_cycle in range(1):
                 for element in range(elements):
                     if element % elements_per_layer == 0:

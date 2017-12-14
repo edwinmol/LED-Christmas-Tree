@@ -147,8 +147,7 @@ void clear() {
 }
 
 void loop() {
-
-  clear();
+  spinner();
   snake();
   fireworks();
   android(15,0,15);
@@ -159,6 +158,21 @@ void loop() {
 
 // ANIMATION CODE
 
+void spinner() {
+  for (int a=0; a<20; a++) {
+    for (int i=0; i<6; i++) {
+      column(1+i,0,0,15); 
+      delay(50);
+      column(1+i,0,0,0); 
+    }
+    clear();
+  }
+}
+void column(byte c, byte r, byte g, byte b) {
+  for (int i=0; i<8; i++) {
+      LED(i, c, r,g,b);
+  } 
+}
 void snake() {  
   for (int i=7; i>=0; i--) {    
     for (int j=1; j<7; j++) {

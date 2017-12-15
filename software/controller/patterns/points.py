@@ -1,92 +1,78 @@
-#this file containes random-point patterns, e.g. voxelRand.
+# this file containes random-point patterns, e.g. voxelRand.
 
-#import fundamental plotting functions, time.sleep, and random.randint
+# import fundamental plotting functions, time.sleep, and random.randint
 from plot import *
 
 from time import sleep
 from random import randint
 
-#fills the cube with random voxels
-#because this uses a uniform random distribution, it has to run at a much
-#   faster speed than other programs to account for the fact that many LEDs are
-#   being lit multiple times
+
+# fills the tree with random voxels
+# because this uses a uniform random distribution, it has to run at a much
+# faster speed than other programs to account for the fact that many LEDs are
+# being lit multiple times
+from patterns.plot import led, fullTree, ledFill, clear
+
+
 def voxelRand(times, speed):
     speed = speed / 5
-    voxels = []
-    
-    #plot random points to fill the cube
+
+    # plot random points to fill the tree
     for t in range(times):
-        vX = randint(0, 3)
-        vY = randint(0, 3)
-        vZ = randint(0, 3)
-        plot(vX, vY, vZ, 1)
+        vX = randint(0, 6)
+        vY = randint(0, 7)
+        led(vX, vY, randint(0, 15), randint(0, 15), randint(0, 15))
         sleep(speed)
         
-    fullcube()
     sleep(speed * 2)
     
-    #plot random points to empty the cube
+    # plot random points to empty the cube
     for t in range(times):
-        vX = randint(0, 3)
-        vY = randint(0, 3)
-        vZ = randint(0, 3)
-        plot(vX, vY, vZ, 0)
+        vX = randint(0, 6)
+        vY = randint(0, 7)
+        led(vX, vY, 0, 0, 0)
         sleep(speed)
         
-    #smoothly erase any remaining points
-    plotFill(0, 3, 0, 3, 3, 3, 0)
-    sleep(speed * 2)
-    
-    plotFill(0, 2, 0, 3, 2, 3, 0)
-    sleep(speed * 2)
-    
-    plotFill(0, 1, 0, 3, 1, 3, 0)
-    sleep(speed * 2)
-    fullcube(0)
+    # smoothly erase any remaining points
+    for l in range(8):
+        ledFill(0, l, 6, l, 0, 0, 0)
+        sleep(speed * 2)
+    clear()
     
     sleep(speed)
 
-#makes a simple firework-like effect
-def LFirework(times, speed):
+
+# makes a simple firework-like effect
+def firework(times, speed):
     for t in range(times):
         stars = []
+        r = randint(0, 15)
+        g = randint(0, 15)
+        b = randint(0, 15)
 
-        #draw the firework spiraling up into the 'sky'
-        for n in range(4):
-            fullcube(0)
-            plot(0, n, 1)
+        # draw the firework spiraling up into the 'sky'
+        for n in range(8):
+            clear()
+            led(0, n, r, g, b)
             sleep(speed)
-            
-            fullcube(0)
-            plot(0, n, 2)
-            sleep(speed)
-            
-            fullcube(0)
-            plot(1, n, 2)
-            sleep(speed)
-            
-            fullcube(0)
-            plot(1, n, 1)
-            sleep(speed)
-            
-        fullcube(0)
-        plot(0, 3, 1)
-        plot(2, 3, 1)
-        plot(1, 3, 0)
-        plot(1, 3, 2)
-        sleep(speed)
 
-        #create random firework star 'twinkles'
-        fullcube(0)
+        for n in range(8):
+            lay = 7 - n
+            clear()
+            ledFill(1, lay, 6, lay, r, g, b)
+            sleep(speed)
+
+        # create random firework star 'twinkles'
+        clear()
         for n in range(randint(6, 9)):
-            stars.append([randint(0, 2), randint(2, 3), randint(0, 3)])
+            stars.append([randint(0, 6), randint(5, 7), randint(0, 15), randint(0, 15), randint(0, 15)])
 
-        #move stars down to the ground
+        # move stars down to the ground
         while stars != []:
             for s in stars:
-                plot(s[0], s[1], s[2])
-                if s[1] < 3:
-                    plot(s[0], s[1]+1, s[2], 0)
+                led(s[0], s[1], s[2], s[3], s[4])
+                if s[1] < 7:
+                    led(s[0], s[1]+1, 0, 0, 0)
                 
                 if s[1] > 0:
                     s[1] -= 1

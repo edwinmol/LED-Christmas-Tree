@@ -1,121 +1,60 @@
-#this file contains geometric shape-related patterns, i.e. patterns that draw
-#   or manipulate geometric shapes more complicated than lines and planes
+# this file contains geometric shape-related patterns, i.e. patterns that draw
+# or manipulate geometric shapes more complicated than lines and planes
 
-#import fundamental plotting functions, time.sleep, and random.randint
+# import fundamental plotting functions, time.sleep, and random.randint
 from patterns.plot import *
 
 from time import sleep
 from random import randint
 
-#lights a wireframe cube at the specified point of the specified size
+# lights a wireframe cube at the specified point of the specified size
 
 
-# def wireframe(time, size, xF=0, yF=0, zF=0):
-#     fullcube(0)
-#     if size == 4:
-#         #if the cube is size 4, it fills the whole LED cube and thus can ignore
-#         #   the start point (xF, yF, zF)
-#
-#         #fill cube, then cut out inner sections
-#         fullcube()
-#         plotFill(1, 0, 1, 2, 3, 2, 0)
-#         plotFill(1, 1, 0, 2, 2, 3, 0)
-#         plotFill(0, 1, 1, 3, 2, 2, 0)
-#
-#     elif size == 3:
-#         #if the cube is smaller than size 4, plot cube relative to (xF, yF, zF)
-#         plotFill(xF, yF, zF, xF+2, yF+2, zF+2)
-#         plotFill(xF+1, yF, zF+1, xF+1, yF+2, zF+1, 0)
-#         plotFill(xF+1, yF+1, zF, xF+1, yF+1, zF+2, 0)
-#         plotFill(xF, yF+1, zF+1, xF+2, yF+1, zF+1, 0)
-#
-#     elif size == 2:
-#         plotFill(xF, yF, zF, xF+1, yF+1, zF+1)
-#
-#     elif size == 1:
-#         plot(xF, yF, zF)
-#
-#     sleep(time)
+# entire tree lights up
+def tree(time):
+    for r in range(16):
+        for g in range(16):
+            for b in range(16):
+                clear()
+                ledFill(0, 0, 6, 7, r, g, b)
+                sleep(time)
 
-#zooms a wireframe cube in and out of random corners
-# def woopwoop(times, speed, sX=0, sY=0, sZ=0):
-#     lastCorner=[0, 0, 0]
-#     cornerList = [0, 0, 0]
-#
-#     for t in range(times):
-#         #play intro sequence
-#         if t == 0:
-#             fullcube(0)
-#             wireframe(speed, 1, sX, sY, sZ)
-#             wireframe(speed, 2, sX, sY, sZ)
-#             wireframe(speed, 3, sX, sY, sZ)
-#             wireframe(speed, 4)
-#
-#         #pick a random corner that's different than last time
-#         while cornerList == lastCorner:
-#             cX = randint(0, 1)
-#             cY = randint(0, 1)
-#             cZ = randint(0, 1)
-#             cornerList = [cX, cY, cZ]
-#
-#         #shrink to the corner, then enlarge out of it
-#         fullcube(0)
-#         wireframe(speed, 4)
-#         wireframe(speed, 3, cX, cY, cZ)
-#         wireframe(speed, 2, cX*2, cY*2, cZ*2)
-#         wireframe(speed, 1, cX*3, cY*3, cZ*3)
-#         sleep(speed)
-#
-#         wireframe(speed, 2, cX*2, cY*2, cZ*2)
-#         wireframe(speed, 3, cX, cY, cZ)
-#         wireframe(speed, 4)
-#
-#         #update lastCorner
-#         lastCorner = cornerList
-#
-#         sleep(speed)
 
-#plots a sphere inside the cube
-# def sphere(time):
-#     fullcube(0)
-#     plotFill(1, 0, 1, 2, 3, 2)
-#     plotFill(1, 1, 0, 2, 2, 3)
-#     plotFill(0, 1, 1, 3, 2, 2)
-#     sleep(time)
-
-#spins a point in circles to create a cylinder, then repeats to erase itself
+# spins a point in circles to create a cylinder, then repeats to erase itself
 def spiral(times, speed):
-    #this function naturally runs slower than most, so speed is divided by 2
-    #   to normalize speed
+    # this function naturally runs slower than most, so speed is divided by 2
+    # to normalize speed
     speed = speed/2
     
     clear()
     for t in range(times):
-        #alternate between plotting 1 and 0
+        # alternate between RGB colors
         for v in range(3):
 
-            #draw the spiraling point, then move up a layer
-            for n in range(8):
-                ledFill(0, n, 1, n, v == 0, v == 1, v == 2)
-                sleep(speed)
+            # draw the spiraling point, then move up a layer
+            for l in range(8):
+                for c in range(7):
+                    led(c, l, 15 if v == 0 else 0, 15 if v == 1 else 0, 15 if v == 2 else 0)
+                    sleep(speed)
 
-                ledFill(1, n, 2, n, v == 0, v == 1, v == 2)
-                sleep(speed)
 
-                ledFill(2, n, 3, n, v == 0, v == 1, v == 2)
-                sleep(speed)
+def snake(times, speed):
+    # this function naturally runs slower than most, so speed is divided by 2
+    # to normalize speed
+    speed = speed/2
 
-                ledFill(3, n, 4, n, v == 0, v == 1, v == 2)
-                sleep(speed)
+    clear()
+    for t in range(times):
+        # alternate between RGB colors
+        for v in range(3):
 
-                ledFill(4, n, 5, n, v == 0, v == 1, v == 2)
-                sleep(speed)
+            # draw the circle point, then move up a layer
+            for l in range(8):
+                for c in range(6):
+                    led(c+1, l, 15 if v == 0 else 0, 15 if v == 1 else 0, 15 if v == 2 else 0)
+                    sleep(speed)
 
-                ledFill(5, n, 6, n, v == 0, v == 1, v == 2)
+            for layer in range(8):
+                lay = 7 - layer
+                led(0, lay, 15 if v == 0 else 0, 15 if v == 1 else 0, 15 if v == 2 else 0)
                 sleep(speed)
-                
-                led(6, n, v == 0, v == 1, v == 2)
-                if n < 7:
-                    led(0, n+1, v == 0, v == 1, v == 2)
-                sleep(speed)
-

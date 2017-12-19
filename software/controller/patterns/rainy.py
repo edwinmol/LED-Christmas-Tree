@@ -1,14 +1,18 @@
-#this file contains "rainy" patterns, e.g. rain and voxelSend
+# this file contains "rainy" patterns, e.g. rain and voxelSend
 
-#import fundamental plotting functions, time.sleep, and random.randint
+# import fundamental plotting functions, time.sleep, and random.randint
 from plot import *
 
 from time import sleep
 from random import randint
 
-#sends random voxels down the y axis, like a rain shower
-#this is a slightly resource-demanding program, so it runs at double speed
-#has variants 'rain' and 'snow'
+
+# sends random voxels down the y axis, like a rain shower
+# this is a slightly resource-demanding program, so it runs at double speed
+# has variants 'rain' and 'snow'
+from patterns.plot import ledFill, led
+
+
 def rain(snow=False, times=1, speed=0.075):
     speed = speed / 2
     drops = []
@@ -36,29 +40,33 @@ def rain(snow=False, times=1, speed=0.075):
             
         sleep(speed)
 
-#sends random voxels up and down the cube
+
+# sends random voxels up and down the cube
 def voxelSend(times, speed):
-    #fill the top and bottom layers
-    plotFill(0, 0, 0, 3, 0, 3)
-    plotFill(0, 3, 0, 3, 3, 3)
+    r = randint(0, 15)
+    g = randint(0, 15)
+    b = randint(0, 15)
+
+# fill the top and bottom layers
+    ledFill(0, 0, 6, 0, r, g, b)
+    ledFill(0, 7, 6, 7, r, g, b)
     sleep(speed)
     
     for t in range(times):
-        #select a new point
-        vX = randint(0, 3)
-        vY = randint(0, 1) * 3
-        vZ = randint(0, 3)
+        # select a new point
+        vX = randint(0, 6)
+        vY = randint(0, 1) * 7
 
-        #send it up or down the cube, depending on its starting y-position
-        for n in range(0, 4):
+        # send it up or down the cube, depending on its starting y-position
+        for n in range(8):
             if vY == 0:
                 if n > 0:
-                    plot(vX, n-1, vZ, 0)
-                plot(vX, n, vZ)
+                    led(vX, n-1, 0, 0, 0)
+                led(vX, n, r, g, b)
                 
-            elif vY == 3:
+            elif vY == 7:
                 if n > 0:
-                    plot(vX, (3-n)+1, vZ, 0)
-                plot(vX, (3-n), vZ)
+                    led(vX, (7-n)+1, 0, 0, 0)
+                led(vX, (7-n), r, g, b)
             
             sleep(speed)

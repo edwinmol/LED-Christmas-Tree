@@ -147,6 +147,7 @@ void clear() {
 }
 
 void loop() {
+  RGB();
   glow();
   spinner();
   snake();
@@ -159,16 +160,22 @@ void loop() {
 
 // ANIMATION CODE
 
+void RGB() {
+  turn(15,0,0,10);
+  delay(1000);  
+  turn(0,15,0,10);
+  delay(1000);  
+  turn(0,0,15,10);
+  delay(1000);  
+}
+
 void glow() {
-  for (int i=0; i<5; i++) {
-    for (int r=1; r<16; r++) {
-        all(r,r,r);
+  for (int i=0; i<4; i++) {
+    for (int r=1; r<32; r++) {
+        int c = r>15?31-r:r;
+        all(c,c,c);
         delay(30);      
     }
-    for (int r=15; r>0; r--) {
-        all(r,r,r);
-        delay(30);      
-    }  
   }
   clear();
 }
@@ -244,13 +251,17 @@ void all(byte r, byte g, byte b) {
 
 void tree(byte r, byte g, byte b) {
   clear();
+  turn(r,g,b,150);
+  delay(1000);
+}
+
+void turn(byte r, byte g, byte b, int d) {
   for (int l=0;l<8;l++) {
     for (int i=0;i<7;i++) {
       LED (l,i,r,g,b);
-      delay(150);
+      delay(d);
     }
   }
-  delay(1000);
 }
 
 void fireworks() {

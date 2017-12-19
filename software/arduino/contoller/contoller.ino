@@ -13,7 +13,7 @@
 
 //setup the data structures
 byte layer = 0; //keep track of the current layer
-byte bamcounter = 0; //4bit resolution = 16 passes per cycle (x8 layers = 128)
+byte bamcounter = 0; //4bit resolution = 15 passes per cycle (x8 layers = 120)
 byte BAMBit = 0; //0 to 3 -> 0 = Most Significant Bit
 
 // Now the data for the LEDs
@@ -97,7 +97,7 @@ void driveLayer()
   if (++layer==8) {
     layer = 0;
   }
-  if (++bamcounter == 128) {
+  if (++bamcounter == 120) {
     bamcounter = 0;
   }
   
